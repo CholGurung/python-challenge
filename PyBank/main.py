@@ -4,20 +4,18 @@ import operator
 
 # Path to collect data from the Resources folder
 bankCSV = os.path.join("Resources", "budget_data.csv")
+file_output = open("Output//pybank_output.txt","w")
 
 # Function to print monthly change
 def calculate_Monthly_Change(lst, n):
     diff = [];
     sum_change = 0
     for i in range(n-1):
-         #print(f'i : {i}  i + 1 : {i+1} + n -1 : {n-1}')
-        # adding the alternate numbers
         diff.append(lst[i+1] - lst[i])
-        
         sum_change = sum_change + (lst[i+1] - lst[i])
 
     average_monthly = sum_change / (n-1)
-    print(f'Average  Change: ${average_monthly}')
+    file_output.write(f'Average  Change: ${average_monthly}' + "\n")
     return diff
      
 # Define the function to calculate average
@@ -30,7 +28,6 @@ def calculate_Changes(dict_bank):
     di = dict_bank.items()
     change_list =[]
     for k,v in di:
-        #print(k, ':',v)
         change_list.append(int(v))
         keys_list.append(k)
     dict_change_per_month = calculate_Monthly_Change(change_list, len(change_list))
@@ -39,15 +36,15 @@ def calculate_Changes(dict_bank):
 # Find the greatest increase in profit over the entire period
     change_dict = zip((x for x in keys_list[1:]),dict_change_per_month)
     monthly_change_dict = dict((x, y) for x, y in set(change_dict))
-    #print(set(change_dict))
     max_val = max(dict_change_per_month)
     max_month = [x for x in monthly_change_dict if monthly_change_dict[x] == max_val]
-    print(f'Greatest Increase in Profits: {max_month} (${max_val} )')
+    file_output.write(f'Greatest Increase in Profits: {max_month} (${max_val})' + "\n")
 
 # Find the greatest decrease in losses over the entire period 
     min_val = min(dict_change_per_month)
     min_month = [x for x in monthly_change_dict if monthly_change_dict[x] == min_val]
-    print(f'Greatest Decrease in Profits: {min_month} (${min_val} )')
+    file_output.write(f'Greatest Decrease in Profits: {min_month} (${min_val})' + "\n")
+
 # Read in the CSV file
 with open(bankCSV, 'r') as csvfile:
 
@@ -67,8 +64,10 @@ with open(bankCSV, 'r') as csvfile:
         total_month = total_month + 1
         dict_bank[row[0]] = row[1]
 
-    print("Financial Analysis")
-    print("----------------------------")
-    print(f' Total Months: {total_month} ')
-    print(f' Total: ${net_amount}')
+    
+    file_output.write("Financial Analysis" + "\n")
+    file_output.write("----------------------------" + "\n")
+    file_output.write(f'Total Months: {total_month} ' + "\n")
+    file_output.write(f'Total: ${net_amount}' + "\n")
     calculate_Changes(dict_bank)
+    file_output.close()
